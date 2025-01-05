@@ -3,10 +3,10 @@ import {createGalleryEntry,getGallery,updateGallery,deleteGallery} from "../cont
 import uploadMiddleware from "../config/multer-config.js";
 const router = express.Router();
 
-router.post("/create", uploadMiddleware, createGalleryEntry);
-router.get("/get", getGallery);
-router.put("/update/:id", updateGallery);
-router.delete("/delete/:id", deleteGallery); 
+router.post("/createGallery", uploadMiddleware, createGalleryEntry);
+router.get("/getGallery", getGallery);
+router.put("/updateGallery/:id", updateGallery);
+router.delete("/deleteGallery/:id", deleteGallery); 
 
 export default router;
 
