@@ -21,3 +21,6 @@ app.use("/api/constants", constRoute);
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+ 
+
+export default app;
