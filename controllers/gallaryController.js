@@ -8,12 +8,11 @@ export const createGalleryEntry = async (req, res) => {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: "No files uploaded" });
     }
+    const imageFiles = req.files.images || [];
 
-    const uploadPromises = req.files.map((file, index) => {
-      return cloudinary.uploader.upload(file.path, {
-        resource_type: "image",
-      });
-    });
+    const uploadPromises = imageFiles.map((file) =>
+      cloudinary.uploader.upload(file.path, { resource_type: "image" })
+    );
 
     const uploadResults = await Promise.all(uploadPromises);
     const imageUrls = uploadResults.map((result) => result.secure_url);
