@@ -8,8 +8,20 @@ const createEvent = async (req, res) => {
   if (!title || !description || !req.files || !date || !formLink || !formDeadline) {
     return res.status(400).json({ message: "All fields are required, including image files" });
   }
+
   try {
-    const uploadPromises = req.files.map((file) =>
+    const qrFile = req.files.qrCode?.[0];
+    const imageFiles = req.files.images || [];
+
+    if (!qrFile) {
+      return res.status(400).json({ message: "QR code image is required" });
+    }
+
+    const qrUploadResult = await cloudinary.uploader.upload(qrFile.path, { 
+      resource_type: "image" 
+    });
+
+    const uploadPromises = imageFiles.map((file) =>
       cloudinary.uploader.upload(file.path, { resource_type: "image" })
     );
 
@@ -23,6 +35,7 @@ const createEvent = async (req, res) => {
       title,
       description,
       imageUrls,
+      qrUrl: qrUploadResult.secure_url,
       date,
       formLink,
       formDeadline,
@@ -100,13 +113,21 @@ const updateEvent = async (req, res) => {
   }
 
   try {
-    if (req.files && req.files.length > 0) {
-      const uploadPromises = req.files.map((file) =>
-        cloudinary.uploader.upload(file.path, { resource_type: "image" })
-      );
+    if (req.files) {
+      if (req.files.qrCode?.[0]) {
+        const qrUploadResult = await cloudinary.uploader.upload(req.files.qrCode[0].path, { 
+          resource_type: "image" 
+        });
+        updatedData.qrUrl = qrUploadResult.secure_url;
+      }
 
-      const uploadResults = await Promise.all(uploadPromises);
-      updatedData.imageUrls = uploadResults.map((result) => result.secure_url); 
+      if (req.files.images?.length > 0) {
+        const uploadPromises = req.files.images.map((file) =>
+          cloudinary.uploader.upload(file.path, { resource_type: "image" })
+        );
+        const uploadResults = await Promise.all(uploadPromises);
+        updatedData.imageUrls = uploadResults.map((result) => result.secure_url);
+      }
     }
 
     const eventRefToUpdate = ref(database, `events/${eventId}`);
