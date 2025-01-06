@@ -22,7 +22,9 @@ const upload = multer({ storage });
 
 const uploadFields = [
   { name: 'qrCode', maxCount: 1 },
-  { name: 'images', maxCount: 10 }
+  { name: 'images', maxCount: 10 },
+  { name: 'teamHeadImage', maxCount: 1 }, // For team head profile picture
+  { name: 'memberImage', maxCount: 1 }, // For team member profile pictures
 ];
 
 const uploadMiddleware = upload.fields(uploadFields);

@@ -2,29 +2,34 @@ import express from "express";
 import {
   postTeams,
   getTeams,
-  updateTeam,
   updateMember,
   updateTeamHead,
   deleteMember,
-  addMember,
-  getTeamHeads
+  getTeamHeads,
+  postMembers,
+  postTeam,
 } from "../controllers/teamsController.js";
+import uploadMiddleware from "../config/multer-config.js";
 const router = express.Router();
 
 // for posting all teams data
-router.post("/postTeams", postTeams);
+router.post("/postTeams", uploadMiddleware, postTeam);
+
+// for adding individual member
+router.post("/postMembers", uploadMiddleware, postMembers);
+
 // for getting all teams data
 router.get("/getTeams", getTeams);
+
 // for getting team heads detail
 router.get("/getTeamHeads", getTeamHeads);
-// for updating team data when new recruitement comes
-router.put("/updateTeam/:teamName", updateTeam);
+
 // for updating individual member data
-router.put("/:teamName/members/:memberIndex", updateMember);
-// for adding a member
-router.post("/:teamName/members", addMember);
+router.put("/:teamName/members/:memberId", uploadMiddleware, updateMember);
+
 // for updating team head data
-router.put("/:teamName/teamHead", updateTeamHead);
+router.put("/:teamName", uploadMiddleware, updateTeamHead);
+
 // for removing a member from the team
-router.delete("/:teamName/members/:memberIndex", deleteMember);
+router.delete("/:teamName/members/:memberId", deleteMember);
 export default router;
